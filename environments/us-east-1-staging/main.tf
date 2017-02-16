@@ -48,7 +48,7 @@ module "api" {
   service          = "api"
   environment      = "${var.environment}"
   region           = "${var.region}"
-  domain           = "*.elbou.net"
+  domain           = "${var.root_domain}"
   key_pair         = "${var.key_pair}"
   min_size         = 1
   max_size         = 1
