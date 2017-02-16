@@ -1,0 +1,67 @@
+{
+  "variables": {
+    "home": "{{env `HOME`}}",
+    "service": "",
+    "environment": "",
+    "region": "",
+    "vpc": "",
+    "subnet": "",
+    "ami": "",
+    "bastion": "",
+    "dd_key": ""
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "region": "{{user `region`}}",
+    "vpc_id": "{{user `vpc`}}",
+    "subnet_id": "{{user `subnet`}}",
+    "source_ami": "{{user `ami`}}",
+    "instance_type": "t2.micro",
+    "iam_instance_profile": "{{user `environment`}}-packer-{{user `region`}}",
+    "ssh_username": "core",
+    "ami_name": "api-{{timestamp}}",
+    "tags": {
+      "Name": "{{user `environment`}}-{{user `service`}}-{{user `region`}}",
+      "environment": "{{user `environment`}}",
+      "service": "{{user `service`}}"
+    },
+    "communicator": "ssh",
+    "ssh_bastion_host": "{{user `bastion`}}",
+    "ssh_bastion_username": "ubuntu",
+    "ssh_bastion_private_key_file": "{{user `home`}}/.ssh/id_rsa.decrypted"
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+      "docker pull cgswong/aws",
+      "docker tag $(docker images -q cgswong/aws) aws"
+    ]
+  }, {
+  "type": "shell",
+  "environment_vars": [
+    "SERVICE={{user `service`}}",
+    "ENVIRONMENT={{user `environment`}}",
+    "AWS_REGION={{user `region`}}"
+  ],
+  "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}",
+  "script": "./logger.sh"
+  }, {
+  "type": "shell",
+  "environment_vars": [
+    "SERVICE={{user `service`}}",
+    "ENVIRONMENT={{user `environment`}}",
+    "AWS_REGION={{user `region`}}",
+    "DATADOG_KEY={{user `dd_key`}}"
+  ],
+  "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}",
+  "script": "./metrics.sh"
+  }, {
+  "type": "shell",
+  "environment_vars": [
+    "AWS_REGION={{user `region`}}",
+    "CREDSTASH={{user `environment`}}-{{user `service`}}-credstash-{{user `region`}}"
+  ],
+  "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}",
+  "script": "./{{user `service`}}.sh"
+  }]
+}

@@ -1,0 +1,7 @@
+ami/configs/*
+debug.tmp
+plan.png
+terraform.tfstate
+terraform.tfstate.backup
+.terraform
+terraform.tfvars

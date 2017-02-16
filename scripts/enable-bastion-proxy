@@ -1,0 +1,10 @@
+#!/bin/sh
+
+trap ctrl_c INT
+
+function ctrl_c() {
+  networksetup -setsocksfirewallproxystate "Wi-Fi" off
+}
+
+networksetup -setsocksfirewallproxy "Wi-Fi" localhost 8888
+ssh -ND 8888 ubuntu@$1
