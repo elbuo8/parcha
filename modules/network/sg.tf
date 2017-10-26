@@ -25,6 +25,7 @@ resource "aws_default_security_group" "default" {
 }
 
 resource "aws_security_group" "bastion" {
+  name        = "${var.environment}-bastion-${var.region}"
   description = "bastion"
   vpc_id      = "${aws_vpc.vpc.id}"
 
@@ -50,6 +51,7 @@ resource "aws_security_group" "bastion" {
 }
 
 resource "aws_security_group" "internal-ssh" {
+  name        = "${var.environment}-internal-ssh-${var.region}"
   description = "internal-ssh"
   vpc_id      = "${aws_vpc.vpc.id}"
 
