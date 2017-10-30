@@ -35,6 +35,11 @@ variable "key_pair" {}
 variable "bastion_zone_id" {}
 variable "bastion_dns" {}
 
+variable "bastion_instance_type" {
+  default     = "t2.micro"
+  description = "Instance type"
+}
+
 provider "aws" {
   region = "${var.region}"
 }
