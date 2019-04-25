@@ -9,6 +9,7 @@ resource "aws_subnet" "public" {
   tags {
     Name        = "${var.environment}-public-subnet-${element(split(",", lookup(var.azs, var.region)), count.index)}"
     environment = "${var.environment}"
+    service     = "public-subnet"
   }
 }
 
@@ -23,5 +24,6 @@ resource "aws_subnet" "private" {
   tags {
     Name        = "${var.environment}-private-subnet-${element(split(",", lookup(var.azs, var.region)), count.index)}"
     environment = "${var.environment}"
+    service     = "private-subnet"
   }
 }
